@@ -1,8 +1,73 @@
 #ifndef _SOAP_SPECTRUM_HPP_
 #define _SOAP_SPECTRUM_HPP_
+#include "SystemAccess.hpp"
+#include "Portal.hpp"
 
 namespace espressopp {
     namespace soap {
+
+
+class CenterDensity
+{
+	CenterDensity() {}
+};
+
+
+class TargetDensity
+{
+	TargetDensity() {}
+};
+
+class Center
+{
+	Center() {}
+};
+
+class Target
+{
+	Target() {}
+};
+
+
+class Spectrum : public SystemAccess
+{
+public:
+	Spectrum(shared_ptr<System> system, shared_ptr<Options> options) : SystemAccess(system), _options(options) {}
+
+	void saveAndClean() { std::cout << "spectrum::save&clean" << std::endl; }
+	void save();
+	void clean();
+
+	void compute() { std::cout << "spectrum::computing" << std::endl; }
+	void computePower();
+	void computeLinear();
+
+	static void registerPython() {
+		using namespace espressopp::python;
+		class_<Spectrum>("soap_Spectrum", init< shared_ptr<System>, shared_ptr<Options> >())
+		    .def("compute", &Spectrum::compute)
+		    .def("saveAndClean", &Spectrum::saveAndClean);
+	}
+
+private:
+
+	shared_ptr<Options> _options;
+
+};
+
+
+class AtomicSpectrum
+{
+	AtomicSpectrum() {}
+};
+
+class SpectrumOverlap
+{
+	SpectrumOverlap() {}
+};
+
+
+
 
 
 /* STORAGE, BASIS, COMPUTATION, PARALLELIZATION */

@@ -52,7 +52,6 @@ public:
 		info += (boost::format("    b2x=%1% b2y=%2% b2z=%3%\n") % _b2[0] % _b2[1] % _b2[2]).str();
 		info += (boost::format("    b3x=%1% b3y=%2% b3z=%3%") % _b3[0] % _b3[1] % _b3[2]).str();
 
-
 		return info;
 	}
 	static void registerPython();

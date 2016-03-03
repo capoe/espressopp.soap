@@ -3,7 +3,7 @@ from momo import osio, endl, flush
 import mpi4py.MPI as MPI
 import os
 
-print MPI.COMM_WORLD.size
+osio << "Running on %d cores ..." % MPI.COMM_WORLD.size << endl
 
 # COLLECT CONFIG FILES FROM FOLDER
 config_file_dir = './configs'
@@ -16,11 +16,11 @@ osio.cd(-1)
 systems = []
 for config in config_list:
     osio << config.atoms << endl
-    print config.atoms.get_initial_charges()
+    #print config.atoms.get_initial_charges()
     system = sxx.tools.convert.aseread.setup_sxx_system(config.atoms)
     systems.append(system)
 
-
+# SET OPTIONS
 options = sxx.soap.Options()
 options.configureCenters(1., [1,77,119])
 options.configureRealBasis(12,9,10.)
@@ -31,7 +31,12 @@ b2 = sxx.Real3D(0,2.,0)
 b3 = sxx.Real3D(0,0,2.)
 options.configureReciprocalLattice(b1, b2, b3)
 
-print options.summarizeOptions()
+osio << options.summarizeOptions() << endl
+
+for system in systems:
+    spectrum = sxx.soap.Spectrum(system, options)
+    #spectrum.saveAndClean()
+    spectrum.compute()
 
 
 for system in systems:
@@ -42,11 +47,19 @@ for system in systems:
     print "portal::initialise"
     portal.initialise()
 
-osio.okquit()
+    osio.okquit()
 
+# COMPUTE
+# spectrum = sxx.soap.Spectrum(system, options)
+# spectrum.compute()
+# spectrum.serialize('config.soap')
 
+# SAVE & LOAD
+# sxx.soap.saveSpectrum(spectrum, 'config.soap')
+# spectrum = sxx.soap.loadSpectrum('config.soap')
 
-
+# OVERLAP
+# overlap = sxx.soap.dot(spectrum, spectrum)
 
 
 

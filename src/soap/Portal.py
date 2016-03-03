@@ -33,7 +33,7 @@ r"""
 from espressopp.esutil import cxxinit
 from espressopp import pmi
 
-from _espressopp import soap_Portal, Options
+from _espressopp import soap_Portal, soap_Options
 
 class PortalLocal(soap_Portal):
     def __init__(self, system):
@@ -48,3 +48,18 @@ if pmi.isController :
             pmiproperty = [],
             pmicall = [ 'initialise' ]
         )
+
+class OptionsLocal(soap_Options):
+    def __init__(self):
+        if not (pmi._PMIComm and pmi._PMIComm.isActive()) or pmi._MPIcomm.rank in pmi._PMIComm.getMPIcpugroup():
+            cxxinit(self, soap_Options)
+
+if pmi.isController :
+    class Options(object):
+        __metaclass__ = pmi.Proxy
+        pmiproxydefs = dict(
+            cls = 'espressopp.soap.OptionsLocal',
+            pmiproperty = [],
+            pmicall = [ 'configureRealBasis', 'configureReciprocalBasis', 'summarizeOptions', 'configureCenters', 'configureReciprocalLattice' ]
+        )
+

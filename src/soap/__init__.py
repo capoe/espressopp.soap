@@ -25,4 +25,5 @@ pmiimport('espressopp.soap')
 from espressopp.soap.Descriptor import *
 from espressopp.soap.Soap import *
 from espressopp.soap.Portal import *
+from espressopp.soap.Spectrum import *
 

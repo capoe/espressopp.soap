@@ -13,12 +13,21 @@ def setup_sxx_system(ase_config):
     r_cutoff = 5.
     r_cutoff_skin = 0.0
 
-    # CONVERT "no-pbc" TO "pbc with vacuum" ...
+    # HANDLE PBC
     ase_cell = ase_config.cell
     box = [ase_cell[0], ase_cell[1], ase_cell[2]]
+
+    if ase_config.pbc[0] == ase_config.pbc[1] == ase_config.pbc[2] == True:
+        BC = sxx.bc.OrthorhombicBC
+    elif ase_config.pbc[0] == ase_config.pbc[1] == ase_config.pbc[2] == False:
+        BC = sxx.bc.OpenBC
+    else:
+        raise NotImplementedError("<setup_sxx_system> Partial periodicity not implemented.")
+
+    # DEFINE BUFFERS FOR OpenBC CASE [YEAH, I KNOW, SXX SHOULD NOT NEED THAT, BUT ...)
     for i in range(3):
         if not ase_config.pbc[i]:
-            scale_i = 3.
+            scale_i = 1.
             xis = ase_config.get_positions()[:,i]
             min_xi, max_xi = min(xis), max(xis)
             L_xi = scale_i*(max_xi-min_xi)
@@ -29,7 +38,7 @@ def setup_sxx_system(ase_config):
     # DEFINE SYSTEM
     system = sxx.System()
     system.rng = sxx.esutil.RNG()
-    system.bc = sxx.bc.OrthorhombicBC(system.rng, box)
+    system.bc = BC(system.rng, box)
     system.skin = r_cutoff_skin
     node_grid = sxx.tools.decomp.nodeGrid(MPI.COMM_WORLD.size)
     cell_grid = sxx.tools.decomp.cellGrid(box, node_grid, r_cutoff, r_cutoff_skin)

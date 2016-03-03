@@ -10,7 +10,8 @@ namespace espressopp { namespace soap {
     
 
 void Options::registerPython() {
-	boost::python::class_<Options>("Options")
+	using namespace espressopp::python;
+	class_<Options, shared_ptr<Options> >("soap_Options")
 	    .def("configureRealBasis", &Options::configureRealBasis)
 		.def("configureReciprocalBasis", &Options::configureReciprocalBasis)
 	    .def("summarizeOptions", &Options::summarizeOptions)
@@ -23,7 +24,6 @@ void Portal::registerPython() {
     class_<Portal>("soap_Portal", init< shared_ptr< System > >())
         .def("initialise", &Portal::initialise);
 }
-
 
 real Portal::initialise() {
     System &system = getSystemRef();

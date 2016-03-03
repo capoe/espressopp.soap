@@ -24,6 +24,7 @@
 #include "Descriptor.hpp"
 #include "Soap.hpp"
 #include "Portal.hpp"
+#include "Spectrum.hpp"
 
 namespace espressopp {
   namespace soap {
@@ -32,6 +33,7 @@ namespace espressopp {
       Soap::registerPython();
       Portal::registerPython();
       Options::registerPython();
+      Spectrum::registerPython();
     }
   }
 }
