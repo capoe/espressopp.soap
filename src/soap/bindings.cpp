@@ -31,6 +31,7 @@ namespace espressopp {
       Descriptor::registerPython();
       Soap::registerPython();
       Portal::registerPython();
+      Options::registerPython();
     }
   }
 }

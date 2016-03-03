@@ -33,7 +33,7 @@ r"""
 from espressopp.esutil import cxxinit
 from espressopp import pmi
 
-from _espressopp import soap_Portal
+from _espressopp import soap_Portal, Options
 
 class PortalLocal(soap_Portal):
     def __init__(self, system):

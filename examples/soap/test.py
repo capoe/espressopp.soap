@@ -3,7 +3,7 @@ from momo import osio, endl, flush
 import mpi4py.MPI as MPI
 import os
 
-
+print MPI.COMM_WORLD.size
 
 # COLLECT CONFIG FILES FROM FOLDER
 config_file_dir = './configs'
@@ -16,8 +16,23 @@ osio.cd(-1)
 systems = []
 for config in config_list:
     osio << config.atoms << endl
+    print config.atoms.get_initial_charges()
     system = sxx.tools.convert.aseread.setup_sxx_system(config.atoms)
     systems.append(system)
+
+
+options = sxx.soap.Options()
+options.configureCenters(1., [1,77,119])
+options.configureRealBasis(12,9,10.)
+options.configureReciprocalBasis(10,7,8.)
+
+b1 = sxx.Real3D(2.,0,0)
+b2 = sxx.Real3D(0,2.,0)
+b3 = sxx.Real3D(0,0,2.)
+options.configureReciprocalLattice(b1, b2, b3)
+
+print options.summarizeOptions()
+
 
 for system in systems:
     tmp = sxx.soap.Soap(system)

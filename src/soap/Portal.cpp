@@ -8,6 +8,16 @@ using namespace iterator;
 
 namespace espressopp { namespace soap {
     
+
+void Options::registerPython() {
+	boost::python::class_<Options>("Options")
+	    .def("configureRealBasis", &Options::configureRealBasis)
+		.def("configureReciprocalBasis", &Options::configureReciprocalBasis)
+	    .def("summarizeOptions", &Options::summarizeOptions)
+		.def("configureCenters", &Options::configureCenters)
+		.def("configureReciprocalLattice", &Options::configureReciprocalLattice);
+}
+
 void Portal::registerPython() {
     using namespace espressopp::python;
     class_<Portal>("soap_Portal", init< shared_ptr< System > >())
@@ -20,8 +30,9 @@ real Portal::initialise() {
     CellList cells = system.storage->getRealCells();
     for (CellListIterator cit(cells); !cit.isDone(); ++cit) {
         Particle &p = *cit;
-        std::cout << p.mass() << std::endl;
+        std::cout << p.id() << " " << p.mass() << " " << p.position() << std::endl;
     }
+
     return -1.;
 }
 
