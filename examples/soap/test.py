@@ -16,8 +16,7 @@ osio.cd(-1)
 systems = []
 for config in config_list:
     osio << config.atoms << endl
-    #print config.atoms.get_initial_charges()
-    system = sxx.tools.convert.aseread.setup_sxx_system(config.atoms)
+    system = sxx.tools.convert.aseread.setup_sxx_system(config.atoms, config.config_file)
     systems.append(system)
 
 # SET OPTIONS
@@ -32,11 +31,17 @@ b3 = sxx.Real3D(0,0,2.)
 options.configureReciprocalLattice(b1, b2, b3)
 
 osio << options.summarizeOptions() << endl
-
+spectra = []
 for system in systems:
+    osio << osio.mg << system.label << endl
     spectrum = sxx.soap.Spectrum(system, options)
-    #spectrum.saveAndClean()
     spectrum.compute()
+    spectrum.saveAndClean()
+    spectra.append(spectrum)
+
+pair_spectrum = sxx.soap.PairSpectrum(systems[0], systems[1], options)
+pair_spectrum.compute()
+osio.okquit()
 
 
 for system in systems:
@@ -47,7 +52,6 @@ for system in systems:
     print "portal::initialise"
     portal.initialise()
 
-    osio.okquit()
 
 # COMPUTE
 # spectrum = sxx.soap.Spectrum(system, options)

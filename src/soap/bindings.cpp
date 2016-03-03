@@ -34,6 +34,7 @@ namespace espressopp {
       Portal::registerPython();
       Options::registerPython();
       Spectrum::registerPython();
+      PairSpectrum::registerPython();
     }
   }
 }

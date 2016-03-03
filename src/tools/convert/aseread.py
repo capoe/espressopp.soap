@@ -7,7 +7,7 @@ try:
 except ImportError:
     print("Note: ase.io import failed. Install PYTHON-ASE to harvest full reader functionality.")
 
-def setup_sxx_system(ase_config):
+def setup_sxx_system(ase_config, system_label):
     
     # TODO Read from options
     r_cutoff = 5.
@@ -37,6 +37,7 @@ def setup_sxx_system(ase_config):
 
     # DEFINE SYSTEM
     system = sxx.System()
+    system.label = system_label
     system.rng = sxx.esutil.RNG()
     system.bc = BC(system.rng, box)
     system.skin = r_cutoff_skin

@@ -2,6 +2,8 @@
 #define _SOAP_SPECTRUM_HPP_
 #include "SystemAccess.hpp"
 #include "Portal.hpp"
+#include "storage/DomainDecomposition.hpp"
+#include "iterator/CellListIterator.hpp"
 
 namespace espressopp {
     namespace soap {
@@ -28,6 +30,9 @@ class Target
 	Target() {}
 };
 
+// Need this: Spectrum(System1, System2, options) where Sys1 <> Sources, Sys2 <> Targets
+
+
 
 class Spectrum : public SystemAccess
 {
@@ -38,7 +43,10 @@ public:
 	void save();
 	void clean();
 
-	void compute() { std::cout << "spectrum::computing" << std::endl; }
+	void compute() {
+		std::cout << "spectrum::computing" << std::endl;
+		std::cout << _options->summarizeOptions() << std::endl;
+	}
 	void computePower();
 	void computeLinear();
 
@@ -59,6 +67,46 @@ private:
 class AtomicSpectrum
 {
 	AtomicSpectrum() {}
+};
+
+
+class PairSpectrum
+{
+public:
+	PairSpectrum(
+	    shared_ptr<System> sys1,
+        shared_ptr<System> sys2,
+		shared_ptr<Options> options)
+        : _sys1(sys1), _sys2(sys2), _options(options) {}
+
+	void compute() {
+		using namespace iterator;
+		System &system = *_sys1;
+		CellList cells = system.storage->getRealCells();
+		for (CellListIterator cit(cells); !cit.isDone(); ++cit) {
+			Particle &p = *cit;
+			std::cout << "System-1 " << p.id() << " " << p.mass() << " " << p.position() << std::endl;
+		}
+		system = *_sys2;
+		cells = system.storage->getRealCells();
+		for (CellListIterator cit(cells); !cit.isDone(); ++cit) {
+			Particle &p = *cit;
+			std::cout << "System-2 " << p.id() << " " << p.mass() << " " << p.position() << std::endl;
+		}
+	}
+	void saveAndClean() { std::cout << "pairspectrum::save&clean" << std::endl; }
+	static void registerPython() {
+		using namespace espressopp::python;
+		class_<PairSpectrum>("soap_PairSpectrum",
+		    init< shared_ptr<System>, shared_ptr<System>, shared_ptr<Options> >())
+			.def("compute", &PairSpectrum::compute)
+			.def("saveAndClean", &PairSpectrum::saveAndClean);
+	}
+
+private:
+	shared_ptr<System> _sys1;
+	shared_ptr<System> _sys2;
+	shared_ptr<Options> _options;
 };
 
 class SpectrumOverlap

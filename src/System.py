@@ -122,6 +122,7 @@ class SystemLocal(_espressopp.System):
         self._integrator = None
         self._interaction2id = {}
         self._interaction_pid = 0
+        self._label = '<nolabel>'
 
     @property
     def integrator(self):
@@ -215,12 +216,20 @@ class SystemLocal(_espressopp.System):
         if pmi.workerIsActive():
             self.cxxclass.setTrace(self, switch)
 
+    @property
+    def label(self):
+        return self._label
+
+    @label.setter
+    def label(self, label):
+        self._label = label
+
 if pmi.isController:
   class System(object):
     __metaclass__ = pmi.Proxy
     pmiproxydefs = dict(
       cls = 'espressopp.SystemLocal',
-      pmiproperty = ['storage', 'bc', 'rng', 'skin', 'maxCutoff', 'integrator'],
+      pmiproperty = ['storage', 'bc', 'rng', 'skin', 'maxCutoff', 'integrator', 'label'],
       pmicall = ['addInteraction','removeInteraction', 'removeInteractionByName',
             'getInteraction', 'getNumberOfInteractions','scaleVolume', 'setTrace',
             'getAllInteractions', 'getInteractionByName']
