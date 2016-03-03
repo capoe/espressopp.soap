@@ -59,6 +59,7 @@
 #include <interaction/bindings.hpp>
 #include <analysis/bindings.hpp>
 #include <io/bindings.hpp>
+#include <soap/bindings.hpp>
 
 void espressopp::registerPython() {
   espressopp::Particle::registerPython();
@@ -94,6 +95,7 @@ void espressopp::registerPython() {
   espressopp::interaction::registerPython();
   espressopp::analysis::registerPython();
   espressopp::io::registerPython();
+  espressopp::soap::registerPython();
 
   log4espp::PyLogger::registerPython();
 }

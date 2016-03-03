@@ -19,10 +19,32 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 
 
-import espresso_old
-import gromacs
-import lammps
-import io_extended
-import topology_helper
-import units
-import aseread
+r"""
+************************************
+**espressopp.soap.Portal**
+************************************
+
+
+.. function:: espressopp.soap.Portal(system)
+
+		:param system: 
+		:type system: 
+"""
+from espressopp.esutil import cxxinit
+from espressopp import pmi
+
+from _espressopp import soap_Portal
+
+class PortalLocal(soap_Portal):
+    def __init__(self, system):
+        if not (pmi._PMIComm and pmi._PMIComm.isActive()) or pmi._MPIcomm.rank in pmi._PMIComm.getMPIcpugroup():
+            cxxinit(self, soap_Portal, system)
+
+if pmi.isController :
+    class Portal(object):
+        __metaclass__ = pmi.Proxy
+        pmiproxydefs = dict(
+            cls = 'espressopp.soap.PortalLocal',
+            pmiproperty = [],
+            pmicall = [ 'initialise' ]
+        )

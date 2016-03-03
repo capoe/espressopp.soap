@@ -19,10 +19,32 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 
 
-import espresso_old
-import gromacs
-import lammps
-import io_extended
-import topology_helper
-import units
-import aseread
+r"""
+************************************
+**espressopp.soap.Soap**
+************************************
+
+
+.. function:: espressopp.soap.Soap(system)
+
+		:param system: 
+		:type system: 
+"""
+from espressopp.esutil import cxxinit
+from espressopp import pmi
+
+from espressopp.soap.Descriptor import *
+from _espressopp import soap_Soap
+
+class SoapLocal(DescriptorLocal, soap_Soap):
+
+    def __init__(self, system):
+    	if not (pmi._PMIComm and pmi._PMIComm.isActive()) or pmi._MPIcomm.rank in pmi._PMIComm.getMPIcpugroup():
+          cxxinit(self, soap_Soap, system)
+
+if pmi.isController :
+    class Soap(Descriptor):
+        __metaclass__ = pmi.Proxy
+        pmiproxydefs = dict(
+            cls = 'espressopp.soap.SoapLocal'
+        )

@@ -19,10 +19,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 
 
-import espresso_old
-import gromacs
-import lammps
-import io_extended
-import topology_helper
-import units
-import aseread
+from espressopp.esutil import pmiimport
+pmiimport('espressopp.soap')
+
+from espressopp.soap.Descriptor import *
+from espressopp.soap.Soap import *
+from espressopp.soap.Portal import *
+
